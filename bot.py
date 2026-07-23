@@ -54,6 +54,6 @@ async def main():
     Thread(target=run_web).start()
     await dp.start_polling(bot)
 
-
 if __name__ == "__main__":
+    Thread(target=run_web).start()
     asyncio.run(main())
