@@ -8,8 +8,8 @@ from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 
-
 TOKEN = os.getenv("8870694306:AAFmVW4WSXgjoz2H2KIPlApPPkYGD5rcFsY")
+print("TOKEN CHECK:", TOKEN is not None)
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
