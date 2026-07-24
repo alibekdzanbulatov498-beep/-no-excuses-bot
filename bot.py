@@ -9,7 +9,7 @@ from aiogram.filters import CommandStart
 from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
 
 from config import BOT_TOKEN
-from database import init_db, add_user, get_user, add_xp
+from database import init_db, add_user, get_user, add_xp, count_users
 
 
 logging.basicConfig(level=logging.INFO)
