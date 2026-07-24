@@ -69,6 +69,8 @@ async def start(message: Message):
 
 Привет, {message.from_user.first_name}! 👋
 
+👥 Нас уже: {count_users()} человек
+
 🎯 Твоя тренировка:
 
 {random.choice(workouts)}
