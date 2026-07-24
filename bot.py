@@ -134,14 +134,6 @@ async def profile(message: Message):
         await message.answer("Сначала напиши /start")
 
 
-async def main():
-
-    print("🔥 BOT STARTED")
-
-    await bot.delete_webhook(drop_pending_updates=True)
-
-    await dp.start_polling(bot)
-
 
 from aiohttp import web
 
