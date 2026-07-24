@@ -1,67 +1,97 @@
 import asyncio
+import random
 
-from aiogram import Bot, Dispatcher, F
+from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 
 from config import BOT_TOKEN
 from database import init_db, add_user, get_user
 
-# Создаем базу данных
+
+# База данных
 init_db()
+
+
+# Тренировки
+workouts = [
+    "💪 Сделай 20 отжиманий",
+    "🔥 Сделай 50 приседаний",
+    "🏃 Пробеги 1 километр",
+    "🧘 Сделай растяжку 10 минут",
+    "💪 Сделай планку 1 минуту",
+    "🥊 Сделай 30 ударов в воздух",
+    "🚶 Пройди 5000 шагов"
+]
+
+
+# Цитаты
+quotes = [
+    "🔥 Успех начинается там, где заканчиваются оправдания.",
+    "💪 Каждый день становись лучше, чем вчера.",
+    "⚡ Дисциплина сильнее мотивации.",
+    "🏆 Маленькие победы создают большие результаты.",
+    "🔥 Никто не сделает это за тебя.",
+    "💯 Твой главный соперник — ты вчерашний."
+]
+
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
 
+# Старт
 @dp.message(CommandStart())
 async def start(message: Message):
+
     add_user(
         message.from_user.id,
         message.from_user.username,
         message.from_user.first_name
     )
 
+    workout = random.choice(workouts)
+    quote = random.choice(quotes)
+
     await message.answer(
         f"""
 🔥 <b>NO EXCUSES</b>
 
-Добро пожаловать, <b>{message.from_user.first_name}</b>!
+Привет, {message.from_user.first_name}! 👋
 
-Это только начало.
+🎯 Твоя тренировка сегодня:
 
-Скоро здесь появятся:
+{workout}
 
-🎯 Ежедневные задания
-🏆 Уровни
-⭐ XP
-🔥 Серия дней
-🥇 Рейтинг
-🎖 Достижения
+💬 Цитата дня:
 
-Пока напиши любое сообщение 😊
+{quote}
+
+Не ищи оправданий. Делай. 💪
 """,
         parse_mode="HTML"
     )
 
 
+# Профиль
 @dp.message()
-async def echo(message: Message):
+async def profile(message: Message):
+
     user = get_user(message.from_user.id)
 
-    await message.answer(
-        f"""
-👤 Ты зарегистрирован!
+    if user:
+        await message.answer(
+            f"""
+👤 Профиль
 
-ID: {user[0]}
 Имя: {user[2]}
 
 🏆 Уровень: {user[4]}
 ⭐ XP: {user[3]}
-🔥 Серия: {user[5]}
+🔥 Серия: {user[5]} дней
 🎯 Выполнено: {user[6]}
 """
-    )
+        )
 
 
 async def main():
