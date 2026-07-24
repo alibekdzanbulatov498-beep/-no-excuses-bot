@@ -59,3 +59,13 @@ def add_xp(user_id, amount):
 
     conn.commit()
     conn.close()
+def count_users():
+    conn = sqlite3.connect("users.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT COUNT(*) FROM users")
+    count = cursor.fetchone()[0]
+
+    conn.close()
+
+    return count
