@@ -143,5 +143,39 @@ async def main():
     await dp.start_polling(bot)
 
 
+from aiohttp import web
+
+
+async def health(request):
+    return web.Response(text="Bot is running")
+
+
+async def web_server():
+    app = web.Application()
+    app.router.add_get("/", health)
+
+    runner = web.AppRunner(app)
+    await runner.setup()
+
+    site = web.TCPSite(
+        runner,
+        "0.0.0.0",
+        10000
+    )
+
+    await site.start()
+
+
+async def main():
+
+    print("🔥 BOT STARTED")
+
+    await bot.delete_webhook(drop_pending_updates=True)
+
+    await web_server()
+
+    await dp.start_polling(bot)
+
+
 if __name__ == "__main__":
     asyncio.run(main())
