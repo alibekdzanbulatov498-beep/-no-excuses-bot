@@ -1,5 +1,6 @@
 import asyncio
 import random
+import logging
 
 from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandStart
@@ -9,29 +10,31 @@ from config import BOT_TOKEN
 from database import init_db, add_user, get_user, add_xp
 
 
-init_db()
+logging.basicConfig(level=logging.INFO)
 
+
+init_db()
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
 
 workouts = [
-    "💪 Сделай 20 отжиманий",
-    "🔥 Сделай 50 приседаний",
-    "🏃 Пробеги 1 километр",
-    "🧘 Сделай растяжку 10 минут",
-    "💪 Стой в планке 1 минуту",
-    "🥊 Сделай 30 ударов"
+    "💪 20 отжиманий",
+    "🔥 50 приседаний",
+    "🏃 Пробежка 1 км",
+    "🧘 Растяжка 10 минут",
+    "💪 Планка 1 минута",
+    "🥊 30 ударов в воздух"
 ]
 
 
 quotes = [
-    "🔥 Успех начинается там, где заканчиваются оправдания.",
-    "💪 Каждый день становись сильнее.",
-    "⚡ Дисциплина важнее мотивации.",
-    "🏆 Маленькие шаги дают большие результаты.",
-    "🔥 Работай молча, результат скажет всё."
+    "🔥 Не ищи оправдания — ищи результат.",
+    "💪 Каждый день становись лучше.",
+    "⚡ Дисциплина побеждает мотивацию.",
+    "🏆 Маленькие шаги создают большие победы.",
+    "🔥 Работай молча — результат всё покажет."
 ]
 
 
@@ -58,22 +61,19 @@ async def start(message: Message):
         message.from_user.first_name
     )
 
-    workout = random.choice(workouts)
-    quote = random.choice(quotes)
-
     await message.answer(
         f"""
 🔥 <b>NO EXCUSES</b>
 
-Привет, {message.from_user.first_name}! 
+Привет, {message.from_user.first_name}! 👋
 
 🎯 Твоя тренировка:
 
-{workout}
+{random.choice(workouts)}
 
 💬 Цитата:
 
-{quote}
+{random.choice(quotes)}
 
 Делай без оправданий 💪
 """,
@@ -82,8 +82,8 @@ async def start(message: Message):
     )
 
 
-@dp.message(lambda message: message.text == "🎯 Тренировка")
-async def training(message: Message):
+@dp.message(lambda m: m.text == "🎯 Тренировка")
+async def workout(message: Message):
 
     await message.answer(
         f"""
@@ -91,50 +91,57 @@ async def training(message: Message):
 
 {random.choice(workouts)}
 
-🔥 Не сдавайся!
+🔥 Сделай это сегодня!
 """
     )
 
 
-@dp.message(lambda message: message.text == "✅ Выполнил")
-async def complete(message: Message):
+@dp.message(lambda m: m.text == "✅ Выполнил")
+async def done(message: Message):
 
     add_xp(message.from_user.id, 20)
 
     await message.answer(
         """
-🎉 Отлично!
+🎉 Красавчик!
 
 ⭐ +20 XP
 
-Продолжай двигаться вперёд 🔥
+Продолжай идти к цели 🔥
 """
     )
 
 
-@dp.message(lambda message: message.text == "👤 Профиль")
+@dp.message(lambda m: m.text == "👤 Профиль")
 async def profile(message: Message):
 
     user = get_user(message.from_user.id)
 
-    await message.answer(
-        f"""
+    if user:
+        await message.answer(
+            f"""
 👤 Профиль
 
 Имя: {user[2]}
 
-🏆 Уровень: {user[4]}
 ⭐ XP: {user[3]}
+🏆 Уровень: {user[4]}
 🔥 Серия: {user[5]}
 🎯 Выполнено: {user[6]}
 """
-    )
+        )
+    else:
+        await message.answer("Сначала напиши /start")
 
 
 async def main():
-    await dp.start_polling(bot)
 
+    print("🔥 BOT STARTED")
 
-async def main():
     await bot.delete_webhook(drop_pending_updates=True)
+
     await dp.start_polling(bot)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
