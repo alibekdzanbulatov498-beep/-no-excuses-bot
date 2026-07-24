@@ -1,3 +1,5 @@
+ADMIN_ID = 5933655039
+
 import asyncio
 import random
 import logging
