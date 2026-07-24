@@ -42,3 +42,20 @@ def get_user(user_id):
 
     conn.close()
     return user
+
+def add_xp(user_id, amount):
+    conn = sqlite3.connect("users.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        UPDATE users
+        SET xp = xp + ?,
+            completed = completed + 1
+        WHERE id = ?
+        """,
+        (amount, user_id)
+    )
+
+    conn.commit()
+    conn.close()
