@@ -165,6 +165,9 @@ async def web_server():
 async def main():
 
     print("🔥 BOT STARTED")
+    
+me = await bot.get_me()
+print(f"Запущен бот: @{me.username}")
 
     await bot.delete_webhook(drop_pending_updates=True)
 
